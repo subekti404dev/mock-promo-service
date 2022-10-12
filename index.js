@@ -24,6 +24,23 @@ const query = async (rawQuery) => {
   });
 };
 
+app.post(mainRoute, async (req, res, next) => {
+  const { id, ...other } = req.body;
+  let rawQuery = `INSERT INTO promos`;
+  if (Object.keys(other).length > 0) {
+    rawQuery += ` (${Object.keys(other).join(", ")}) VALUES (${Object.keys(
+      other
+    )
+      .map((k) => `'${other[k]}'`)
+      .join(", ")})`;
+  }
+  const rows = await query(rawQuery);
+  res.status(200).json({
+    success: true,
+    data: rows[0],
+  });
+});
+
 app.get(mainRoute, async (req, res, next) => {
   let { _page, _limit, _sort, ...other } = req.query;
   const page = parseInt(_page) || 1;
@@ -101,6 +118,14 @@ app.put(mainRoute + "/:id", async (req, res, next) => {
     }
   }
   await query(`${rawQuery} WHERE id=${req.params.id}`);
+  res.status(200).json({
+    success: true,
+    data: req.body,
+  });
+});
+
+app.delete(mainRoute + "/:id", async (req, res, next) => {
+  await query(`DELETE FROM promos WHERE id=${req.params.id}`);
   res.status(200).json({
     success: true,
     data: req.body,
