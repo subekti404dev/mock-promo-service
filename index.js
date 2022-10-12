@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -8,10 +9,10 @@ const mainRoute = `/api/v1/promo`;
 
 const Pool = require("pg").Pool;
 const pool = new Pool({
-  user: "hnvazkhi",
-  host: "satao.db.elephantsql.com",
-  database: "hnvazkhi",
-  password: "A76qPU4fgpVWt7Mw6YtIxFXWEYwRnC_5",
+  user: process.env.DB_USER,
+  host:  process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
   port: 5432,
 });
 
