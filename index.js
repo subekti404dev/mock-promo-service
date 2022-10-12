@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 app.use(express.json());
+app.use(cors());
+
+const mainRoute = `/campaign/promo/farmer`;
 
 const Pool = require("pg").Pool;
 const pool = new Pool({
@@ -20,12 +24,11 @@ const query = async (rawQuery) => {
   });
 };
 
-app.get("/campaign/promo/farmer", async (req, res, next) => {
+app.get(mainRoute, async (req, res, next) => {
   let { _page, _limit, _sort, ...other } = req.query;
   const page = parseInt(_page) || 1;
   const limit = parseInt(_limit) || 10;
   const sort = _sort;
-
 
   let rawQuery = "SELECT * FROM promos";
   let countRawQuery = "SELECT COUNT(id) FROM promos";
@@ -65,7 +68,6 @@ app.get("/campaign/promo/farmer", async (req, res, next) => {
   let [{ count }] = await query(countRawQuery);
   count = parseInt(count);
 
-
   res.status(200).json({
     success: true,
     data,
@@ -75,6 +77,14 @@ app.get("/campaign/promo/farmer", async (req, res, next) => {
       total_count: count,
       total_page: Math.ceil(count / limit),
     },
+  });
+});
+
+app.get(mainRoute + "/:id", async (req, res, next) => {
+  const rows = await query(`SELECT * FROM promos WHERE id=${req.params.id}`);
+  res.status(200).json({
+    success: true,
+    data: rows[0],
   });
 });
 
