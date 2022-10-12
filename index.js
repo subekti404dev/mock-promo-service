@@ -88,6 +88,25 @@ app.get(mainRoute + "/:id", async (req, res, next) => {
   });
 });
 
+app.put(mainRoute + "/:id", async (req, res, next) => {
+  const { id, ...other } = req.body;
+  let rawQuery = `UPDATE promos`;
+  if (Object.keys(other).length > 0) {
+    const data = [];
+    Object.keys(other).map((key) => {
+      data.push(`${key} = '${other[key]}'`);
+    });
+    if (data.length > 0) {
+      rawQuery += ` SET ${data.join(", ")}`;
+    }
+  }
+  await query(`${rawQuery} WHERE id=${req.params.id}`);
+  res.status(200).json({
+    success: true,
+    data: req.body,
+  });
+});
+
 app.listen("3001", () => {
   console.log("Server is listening on port 3001");
 });
