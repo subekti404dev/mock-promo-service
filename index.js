@@ -4,7 +4,7 @@ const cors = require("cors");
 app.use(express.json());
 app.use(cors());
 
-const mainRoute = `/campaign/promo/farmer`;
+const mainRoute = `/api/v1/promo`;
 
 const Pool = require("pg").Pool;
 const pool = new Pool({
